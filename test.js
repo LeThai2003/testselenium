@@ -11,6 +11,7 @@ async function typeSlowly(element, text, delay = 100) {
   }
 }
 
+
 (async function testRedirectIfNotLoggedIn() {
   let driver = await new Builder().forBrowser('chrome').build();
 
@@ -46,7 +47,7 @@ async function typeSlowly(element, text, delay = 100) {
 
       if (afterLoginUrl.includes('/dashboard')) {
         console.log('Đăng nhập thành công và chuyển tới dashboard.');
-
+  
         // Đợi menu xuất hiện để đảm bảo dashboard đã load xong
         await driver.wait(until.elementLocated(By.id('menu_1')), 10000);
         await sleep(2000); // chờ thêm cho chắc
@@ -99,7 +100,7 @@ async function typeSlowly(element, text, delay = 100) {
 
 
 
-    // ================== TEST INCOME PAGE ==================
+    // ================================================ TEST INCOME PAGE =================================================
     console.log("\n--------------------------------------------------------------");
 
     await driver.wait(until.elementLocated(By.id('menu_1')), 10000);
@@ -130,11 +131,11 @@ async function typeSlowly(element, text, delay = 100) {
 
     // Điền input source
     const sourceInput = await driver.findElement(By.css('input[type="text"]'));
-    await sourceInput.sendKeys('Lương tháng 4');
+    await typeSlowly(sourceInput, 'Lương tháng 4');
 
     // Điền input amount (số tiền)
     const amountInput = await driver.findElement(By.css('input[type="number"]'));
-    await amountInput.sendKeys('10000000');
+    await typeSlowly(amountInput, '10000000');
 
     // Chọn ngày
     const dateInput = await driver.findElement(By.css('input[type="date"]'));
@@ -176,7 +177,7 @@ async function typeSlowly(element, text, delay = 100) {
     // nhập soruce nhưng không nhập amount
     const sourceInput2 = await driver.findElement(By.css('input[type="text"]'));
     await sourceInput2.clear();
-    await sourceInput2.sendKeys('Đầu tư'); 
+    await typeSlowly(sourceInput2, 'Đầu tư');
 
     await submitBtn2.click();
     await sleep(1000);
@@ -192,7 +193,7 @@ async function typeSlowly(element, text, delay = 100) {
 
     // có source + nhập amount
     const amountInput3 = await driver.findElement(By.css('input[type="number"]'));
-    await amountInput3.sendKeys('5000000');
+    await typeSlowly(amountInput3, '5000000');
 
     await submitBtn2.click();
     await sleep(1000);
@@ -267,9 +268,25 @@ async function typeSlowly(element, text, delay = 100) {
 
     await sleep(4000);
 
+    //---download income----
+    console.log("Đang kiểm tra tải về chi tiết khoản thu: ");
+
+    const btnDownloadIncome = await driver.findElement(By.id("download_income"));
+    btnDownloadIncome.click();
+    await sleep(2000);
+
+    try {
+      const toastDeleteIncomSuc = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Tải xuống chi tiết khoản thu thành công!')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+
+    await sleep(4000);
 
 
-    // ================== TEST EXPENSE PAGE ==================
+
+    // ================================================== TEST EXPENSE PAGE ==========================================================
     console.log("\n--------------------------------------------------------------");
 
     await driver.wait(until.elementLocated(By.id('menu_2')), 10000);
@@ -300,11 +317,11 @@ async function typeSlowly(element, text, delay = 100) {
 
     // Điền input source
     const categoryInput = await driver.findElement(By.css('input[type="text"]'));
-    await categoryInput.sendKeys('Thuê nhà');
+    await typeSlowly(categoryInput, 'Thuê nhà');
 
     // Điền input amount (số tiền)
     const amountInputExpense = await driver.findElement(By.css('input[type="number"]'));
-    await amountInputExpense.sendKeys('4000000');
+    await typeSlowly(amountInputExpense, '4000000');
 
     // Chọn ngày
     const dateInputExpense = await driver.findElement(By.css('input[type="date"]'));
@@ -346,7 +363,7 @@ async function typeSlowly(element, text, delay = 100) {
     // nhập soruce nhưng không nhập amount
     const categoryInput2 = await driver.findElement(By.css('input[type="text"]'));
     await categoryInput2.clear();
-    await categoryInput2.sendKeys('Mua áo'); 
+    await typeSlowly(categoryInput2, 'Mua áo');
 
     await submitBtnExpense2.click();
     await sleep(1000);
@@ -362,7 +379,7 @@ async function typeSlowly(element, text, delay = 100) {
 
     // có source + nhập amount
     const amountInputExpense2 = await driver.findElement(By.css('input[type="number"]'));
-    await amountInputExpense2.sendKeys('400000');
+    await typeSlowly(amountInputExpense2, '400000');
 
     await submitBtnExpense2.click();
     await sleep(1000);
@@ -434,6 +451,148 @@ async function typeSlowly(element, text, delay = 100) {
       console.log("Thất bại\n");
     }
 
+    await sleep(4000);
+
+
+    //---download exense----
+    console.log("Đang kiểm tra tải về chi tiết khoản thu: ");
+
+    const btnDownloadExpense = await driver.findElement(By.id("download_expense"));
+    btnDownloadExpense.click();
+    await sleep(2000);
+
+    try {
+      const toastDeleteIncomSuc = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Tải xuống chi tiết khoản tiêu thành công!')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+
+    await sleep(4000);  
+
+
+
+  // ========================================== TEST NOTE PAGE ======================================================
+    console.log("\n--------------------------------------------------------------");
+    await driver.wait(until.elementLocated(By.id('menu_3')), 10000);
+    await driver.get('http://localhost:5173/note');
+    await sleep(3000);
+
+    // ---- thêm mới note----
+    const btnAddNote = await driver.findElement(By.id("add-note"));
+    btnAddNote.click();
+    await sleep(2000);
+
+    const inputTitle = await driver.findElement(By.id("title"));
+    await typeSlowly(inputTitle, 'Chạy bộ');
+    await sleep(1000);
+    
+    const textContent = await driver.findElement(By.id("content"));
+    await typeSlowly(textContent, 'Chạy bộ 5km');
+    await sleep(1000);
+
+    const inputTags = await driver.findElement(By.id("tags"));
+    await typeSlowly(inputTags, 'Chạy');
+    await sleep(1000);
+
+    const btnAddTag = await driver.findElement(By.id("add-tag"));
+    await btnAddTag.click();
+    await sleep(2000);
+
+    const btnSubmit = await driver.findElement(By.id("btnAddNote"));
+    btnSubmit.click();
+    await sleep(1000);
+
+    console.log("Đang kiểm tra thêm mới ghi chú thành công: ");
+    try {
+      const toastSuccess = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Thêm ghi chú thành công')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+    await sleep(4000);
+
+    // -----tìm kiếm------
+    console.log("Đang kiểm tra tìm kiếm ghi chú: ");
+    try {
+      const inputSearchNote = await driver.findElement(By.id("search-note"));
+      await typeSlowly(inputSearchNote, 'Chạy bộ');
+      await sleep(1000);
+
+      const btnSearchNote = await driver.findElement(By.id("btn-search-note"));
+      btnSearchNote.click();
+      await sleep(4000);
+
+      const btnClearSearchNote = await driver.findElement(By.id("btn-delete-search"));
+      btnClearSearchNote.click();
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+    await sleep(4000);
+    
+    // ghim
+    console.log("Đang kiểm tra ghim/bỏ ghim ghi chú: ");
+    try {
+      const pinnedBtn = await driver.findElement(By.xpath("//body/div[@id='root']/div/div/div/div[@class='flex']/div[@class='grow mx-5']/div[@class='my-5 mx-auto']/div/div[@id='list-notes']/div[3]/div[1]//*[name()='svg']"));
+      await pinnedBtn.click();
+      await sleep(2000);  
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+
+    await sleep(3000);
+
+    // -----cập nhật------
+    const editBtn = await driver.findElement(By.xpath("//div[@id='list-notes']//div[1]//div[2]//div[2]//*[name()='svg']//*[name()='path' and contains(@d,'M3 17.25V2')]"));
+    await editBtn.click();
+    await sleep(2000);  
+
+    const inputTitleEdit = await driver.findElement(By.id("title"));
+    inputTitleEdit.clear();
+    await typeSlowly(inputTitleEdit, 'EDIT: Chạy bộ');
+    await sleep(1000);
+    
+    const btnConfirmEdit = await driver.findElement(By.id("btnAddNote"));
+    btnConfirmEdit.click();
+    await sleep(1000);
+
+    console.log("Đang kiểm tra chỉnh sửa ghi chú thành công: ");
+    try {
+      const toastSuccess = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Cập nhật ghi chú thành công')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+    await sleep(4000);
+
+
+    // ------xóa------
+    const deleteBtnNote = await driver.findElement(By.xpath("//div[@id='list-notes']//div[1]//div[2]//div[2]//*[name()='svg']//*[name()='path' and contains(@d,'M6 19c0 1.')]"));
+    await deleteBtnNote.click();
+    await sleep(2000);
+
+    const deleteNote = await driver.findElement(By.id("delete"));
+    await deleteNote.click();
+    await sleep(2000);
+
+    console.log("Đang kiểm tra xóa ghi chú thành công: ");
+    try {
+      const toastDeleteExpenseSuc = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Xóa ghi chú thành công')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+
+    await sleep(4000);
+
+
+    //================================LOG OUT============================
+    console.log("\n--------------------------------------------------------------");
+    await driver.wait(until.elementLocated(By.id('menu_4')), 10000);
+    const btnLogout = driver.findElement(By.id("menu_4"));
+    btnLogout.click();
     await sleep(4000);
 
 
