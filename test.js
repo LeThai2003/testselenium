@@ -267,6 +267,176 @@ async function typeSlowly(element, text, delay = 100) {
 
     await sleep(4000);
 
+
+
+    // ================== TEST EXPENSE PAGE ==================
+    console.log("\n--------------------------------------------------------------");
+
+    await driver.wait(until.elementLocated(By.id('menu_2')), 10000);
+    await driver.get('http://localhost:5173/expense');
+    await sleep(3000);
+
+
+    // ---------------------test thêm mới thành công----------------------
+
+    // Mở form thêm income
+    const openFormExpenseBtn = await driver.findElement(By.id('btn_open_frExpense'));
+    await openFormExpenseBtn.click();
+    await sleep(2000); // chờ form mở
+
+    // Click chọn icon 
+    const pickerIcon2 = await driver.findElement(By.css('.flex.items-center.gap-4.cursor-pointer'));
+    await pickerIcon2.click();
+    await sleep(2000);
+
+    const iconSelector2 = await driver.wait(until.elementLocated(By.css('button[data-unified="1f3e0"]')), 10000);
+    await iconSelector2.click();
+    await sleep(1000); 
+
+    const closePicker2 = await driver.findElement(By.id("close_picker"));
+    await closePicker2.click();
+    await sleep(1000)
+    
+
+    // Điền input source
+    const categoryInput = await driver.findElement(By.css('input[type="text"]'));
+    await categoryInput.sendKeys('Thuê nhà');
+
+    // Điền input amount (số tiền)
+    const amountInputExpense = await driver.findElement(By.css('input[type="number"]'));
+    await amountInputExpense.sendKeys('4000000');
+
+    // Chọn ngày
+    const dateInputExpense = await driver.findElement(By.css('input[type="date"]'));
+    await dateInputExpense.clear(); // Xoá trước
+    await dateInputExpense.sendKeys('05/18/2025');
+
+    // Click nút Thêm
+    const submitBtnExpense = await driver.findElement(By.id('add_expense'));
+    await submitBtnExpense.click();
+
+    console.log("Đang kiểm tra thêm mới chi tiêu thành công: ");
+    try {
+      const toastSuccess = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Thêm khoản chi thành công')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+    await sleep(4000);
+
+    // ---------------------test thêm mới không nhập đủ dữ liệu----------------------
+    const openFormExpenseBtn2 = await driver.findElement(By.id('btn_open_frExpense'));
+    await openFormExpenseBtn2.click();
+    await sleep(2000);
+
+    // add mà không nhập source
+    const submitBtnExpense2 = await driver.findElement(By.id('add_expense'));
+    await submitBtnExpense2.click();
+    sleep(1000);
+
+    console.log("Đang kiểm tra nguồn chi không để trống: ");
+    try {
+      const toastCategoryEmpty = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Khoản chi không được để trống')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+    await sleep(2000);
+
+    // nhập soruce nhưng không nhập amount
+    const categoryInput2 = await driver.findElement(By.css('input[type="text"]'));
+    await categoryInput2.clear();
+    await categoryInput2.sendKeys('Mua áo'); 
+
+    await submitBtnExpense2.click();
+    await sleep(1000);
+
+    console.log("Đang kiểm tra số tiền không để trống: ");
+    try {
+      const toastAmountEmpty = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Số tiền không hợp lệ')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+    await sleep(2000);
+
+    // có source + nhập amount
+    const amountInputExpense2 = await driver.findElement(By.css('input[type="number"]'));
+    await amountInputExpense2.sendKeys('400000');
+
+    await submitBtnExpense2.click();
+    await sleep(1000);
+
+    console.log("Đang kiểm tra số ngày thêm để trống: ");
+    try {
+      const toastDateEmpty = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Ngày chi không được để trống')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+
+    await sleep(2000);
+
+    // có source có amount + nhập date
+    const dateInputExpense2 = await driver.findElement(By.css('input[type="date"]'));
+    await dateInputExpense2.clear(); // Xoá trước
+    await dateInputExpense2.sendKeys('05/17/2025');
+
+    await submitBtnExpense2.click();
+    await sleep(4000);
+
+    // ---------------------test thêm mới mở form rồi đóng form----------------------
+    console.log("Đang kiểm tra số mở form rồi đóng form: ");
+    try {
+      const openFormExpenseBtn3 = await driver.findElement(By.id('btn_open_frExpense'));
+      await openFormExpenseBtn3.click();
+      await sleep(2000);
+      const closeFormBtnExpense3 = await driver.findElement(By.id('close_modal'));
+      await closeFormBtnExpense3.click();
+      await sleep(2000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+    await sleep(4000);
+
+    // ---------------------------xóa income----------------------
+    const deleteBtnExpense = await driver.findElement(By.xpath("//div[@class='grid grid-cols-1 gap-6']//div[1]//div[2]//div[2]//button[1]"));
+    await deleteBtnExpense.click();
+    await sleep(2000);
+
+    const deleteExpense = await driver.findElement(By.id("delete"));
+    await deleteExpense.click();
+    await sleep(2000);
+
+    console.log("Đang kiểm tra xóa khoản chi thành công: ");
+    try {
+      const toastDeleteExpenseSuc = await driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Xóa khoản chi thành công')]")), 5000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+
+    await sleep(4000);
+
+    // ---------- chọn xóa sau đó chọn hủy -----------
+    console.log("Đang kiểm tra chọn xóa khoản chi nhưng sau đó hủy xóa: ");
+    try {
+      const deleteBtnExpense2 = await driver.findElement(By.xpath("//div[@class='grid grid-cols-1 gap-6']//div[1]//div[2]//div[2]//button[1]"));
+      await deleteBtnExpense2.click();
+      await sleep(2000);
+
+      const closeFormBtnExpense = await driver.findElement(By.id('close_modal'));
+      await closeFormBtnExpense.click();
+      await sleep(2000);
+      console.log("Thành công\n");
+    } catch (error) {
+      console.log("Thất bại\n");
+    }
+
+    await sleep(4000);
+
+
   } catch (error) {
     console.error('Có lỗi xảy ra:', error);
   } finally {
